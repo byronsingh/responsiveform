@@ -1,0 +1,51 @@
+.respopupoverlay {
+    position:fixed;
+    z-index:9999;
+    top:0px;
+    left:0px;
+    width:100%;
+    height:100%;
+    background-color:rgba(0,0,0,0.5);
+}
+.respopup {
+    z-index:10000;
+    position:fixed;
+    top: 50%;
+    left: 50%;
+    background-color:#FFFFFF;
+    transform: translate(-50%, -50%);
+}
+.respopupheader {
+    position:fixed;
+    top:0px;
+    left:0px;
+    width:100%;
+    z-index:10001;
+    padding:5px 10px;
+    background-color:#FFFFFF;
+    cursor:pointer;
+    box-sizing:border-box;
+    text-align:center;
+    display:none;
+}
+.respopupheader .closebutton {
+    position:absolute;
+    top:5px;
+    left:10px;
+}
+.respopupheader .header {
+    font-weight:bold;
+}
+#responsiveform_viewport {
+    overflow:hidden;
+}
+@media screen and (max-width: 767px) {
+    .respopup {
+        width:100% !important;
+        position:absolute;
+        left:0px;
+        top:0px;
+        margin:0px;
+        transform: none;
+    }
+}

@@ -4,7 +4,6 @@
     var $el = null;
     var $popup = null;
     var initialized = false;
-    var opt_width = 600;
     var opt_response_width = 768;
 
     var saved_scroll = 0;
@@ -23,9 +22,6 @@
 
     var setSize = function() {
         check_current_screen_size();
-        if ($popup != null) {
-            $popup.width(opt_width);
-        }
 
         // special handling when screen changes from big to small
         if (current_popup_status == "open_big" && is_small_screen_mode) {
@@ -36,6 +32,12 @@
         if (current_popup_status == "open_small" && !is_small_screen_mode) {
             restoreScreenForSmallPopup();
             current_popup_status = "open_big";
+        }
+
+        if (current_popup_status == "open_small") {
+            $popup.css("min-height", $(window).height());
+            var bodymargin = $("body").outerHeight(true) - $("body").height();
+            $("#responsiveform_viewport").height($popup.outerHeight() + saved_scroll - bodymargin);
         }
     };
 
@@ -56,6 +58,11 @@
 
         $("body").append("<div class='respopup'></div>");
         $popup = $(".respopup");
+
+        $("body").append("<div class='respopupheader'><span class='closebutton'>Close</span><span class='header'>The header</span></div>");
+        $(".respopupheader .closebutton").click(function() {
+            closePopup();
+        });
 
         $(window).resize(function() {
             setSize();
@@ -81,6 +88,7 @@
         }
         
         $(".respopupoverlay").hide();
+        $(".respopupheader").hide();
         restore_element();
         $popup.hide();
 
@@ -88,18 +96,27 @@
     };
 
     var restoreScreenForSmallPopup = function() {
-        $("#body_wrapper").css("margin-top", "");
-        $("#body_wrapper").css("overflow", "");
-        $("#body_wrapper").css("height", "");
+        $(".respopupheader").hide();
+        $("#responsiveform_viewport").css("margin-top", "");
+        $("#responsiveform_viewport").css("overflow", "");
+        $("#responsiveform_viewport").css("height", "");
+        $popup.css("top", "");
+        $popup.css("min-height", "");
         $(window).scrollTop(saved_scroll);
         saved_scroll = 0;
     };
     var adjustScreenForSmallPopup = function(animate) {
         saved_scroll = $(window).scrollTop();
 
-        $("#body_wrapper").css("margin-top", - saved_scroll);
-        $("#body_wrapper").css("overflow", "hidden");
-        $("#body_wrapper").height($popup.outerHeight() + saved_scroll);
+        $(".respopupheader").show();
+
+        $("#responsiveform_viewport").css("margin-top", - saved_scroll);
+        $("#responsiveform_viewport").css("overflow", "hidden");
+
+        $popup.css("min-height", $(window).height());
+        var bodymargin = $("body").outerHeight(true) - $("body").height();
+        $("#responsiveform_viewport").height($popup.outerHeight() + saved_scroll - bodymargin);
+
         $(window).scrollTop(0);
 
         if (animate) {
@@ -117,10 +134,10 @@
     };
 
     $.fn.responsiveform = function(opts) {
-        if (opts.width != null)
-            opt_width = opts.width;
-        if (opts.response_width != null)
-            opt_response_width = opts.response_width;
+        if (typeof opts != "undefined") {
+            if (opts.response_width != null)
+                opt_response_width = opts.response_width;
+        }
 
         if (!initialized)
             initialize();
@@ -133,6 +150,10 @@
             openPopup(this);
 
         setSize();
+    };
+
+    $.fn.responsiveform_close = function() {
+        closePopup();
     };
 
 })(jQuery);
