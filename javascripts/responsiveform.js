@@ -59,7 +59,7 @@
         $("body").append("<div class='respopup'></div>");
         $popup = $(".respopup");
 
-        $("body").append("<div class='respopupheader'><span class='closebutton'>Close</span><span class='header'>The header</span></div>");
+        $("body").append("<div class='respopupheader'><span class='closebutton'>Close</span><span class='header'>The Header</span></div>");
         $(".respopupheader .closebutton").click(function() {
             closePopup();
         });
@@ -121,7 +121,7 @@
 
         if (animate) {
             $popup.css("top", saved_scroll + $(window).height());
-            $popup.animate({ 'top': 0}, 200);
+            $popup.animate({ 'top': 0}, 300);
         } else {
             $popup.css("top", 0);
         }
@@ -134,13 +134,15 @@
     };
 
     $.fn.responsiveform = function(opts) {
+        if (!initialized)
+            initialize();
+
         if (typeof opts != "undefined") {
             if (opts.response_width != null)
                 opt_response_width = opts.response_width;
+            if (opts.header != null)
+                $(".respopupheader .header").html(opts.header);
         }
-
-        if (!initialized)
-            initialize();
 
         check_current_screen_size();
 

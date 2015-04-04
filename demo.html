@@ -67,7 +67,7 @@
 	<script>
 		$(function() {
 			$(".trigger_form").click(function() {
-				$("#popup_form").responsiveform();
+				$("#popup_form").responsiveform({header: "Enter Details"});
 			});
 			$("#submit").click(function(e) {
 				$("#popup_form").responsiveform_close();
