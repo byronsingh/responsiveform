@@ -5,6 +5,7 @@
     var $popup = null;
     var initialized = false;
     var opt_response_width = 768;
+    var opt_viewport_selector = ".responsiveform_viewport";
 
     var saved_scroll = 0;
 
@@ -37,7 +38,7 @@
         if (current_popup_status == "open_small") {
             $popup.css("min-height", $(window).height());
             var bodymargin = $("body").outerHeight(true) - $("body").height();
-            $("#responsiveform_viewport").height($popup.outerHeight() - bodymargin);
+            $(opt_viewport_selector).height($popup.outerHeight() - bodymargin);
         }
     };
 
@@ -97,9 +98,9 @@
 
     var restoreScreenForSmallPopup = function() {
         $(".respopupheader").hide();
-//        $("#responsiveform_viewport").css("margin-top", "");
-        $("#responsiveform_viewport").css("overflow", "");
-        $("#responsiveform_viewport").css("height", "");
+//        $(opt_viewport_selector).css("margin-top", "");
+        $(opt_viewport_selector).css("overflow", "");
+        $(opt_viewport_selector).css("height", "");
         $popup.css("top", "");
         $popup.css("min-height", "");
         $(window).scrollTop(saved_scroll);
@@ -112,8 +113,8 @@
             $popup.css("top", 0);
             $(window).scrollTop(0);
             var bodymargin = $("body").outerHeight(true) - $("body").height();
-            $("#responsiveform_viewport").height($popup.outerHeight() - bodymargin);
-            $("#responsiveform_viewport").css("overflow", "hidden");
+            $(opt_viewport_selector).height($popup.outerHeight() - bodymargin);
+            $(opt_viewport_selector).css("overflow", "hidden");
             $(".respopupheader").show();
             current_popup_status = "open_small";
         };
@@ -161,6 +162,8 @@
                 opt_response_width = opts.response_width;
             if (opts.header != null)
                 $(".respopupheader .header").html(opts.header);
+            if (opts.viewport_selector != null)
+                opt_viewport_selector = opts.viewport_selector;
         }
 
         check_current_screen_size();

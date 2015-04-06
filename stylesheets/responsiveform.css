@@ -36,9 +36,6 @@
 .respopupheader .header {
     font-weight:bold;
 }
-#responsiveform_viewport {
-    overflow:hidden;
-}
 @media screen and (max-width: 767px) {
     .respopup {
         width:100% !important;
