@@ -8,7 +8,7 @@
 
     var saved_scroll = 0;
 
-    // "closed", "open_big", "open_small"
+    // "closed", "open_big", "open_small", "open_small_animation"
     var current_popup_status = "closed";
     var is_small_screen_mode = false;
 
@@ -37,7 +37,7 @@
         if (current_popup_status == "open_small") {
             $popup.css("min-height", $(window).height());
             var bodymargin = $("body").outerHeight(true) - $("body").height();
-            $("#responsiveform_viewport").height($popup.outerHeight() + saved_scroll - bodymargin);
+            $("#responsiveform_viewport").height($popup.outerHeight() - bodymargin);
         }
     };
 
@@ -97,7 +97,7 @@
 
     var restoreScreenForSmallPopup = function() {
         $(".respopupheader").hide();
-        $("#responsiveform_viewport").css("margin-top", "");
+//        $("#responsiveform_viewport").css("margin-top", "");
         $("#responsiveform_viewport").css("overflow", "");
         $("#responsiveform_viewport").css("height", "");
         $popup.css("top", "");
@@ -108,8 +108,26 @@
     var adjustScreenForSmallPopup = function(animate) {
         saved_scroll = $(window).scrollTop();
 
-        $(".respopupheader").show();
+        var adjustViewport = function() {
+            $popup.css("top", 0);
+            $(window).scrollTop(0);
+            var bodymargin = $("body").outerHeight(true) - $("body").height();
+            $("#responsiveform_viewport").height($popup.outerHeight() - bodymargin);
+            $("#responsiveform_viewport").css("overflow", "hidden");
+            $(".respopupheader").show();
+            current_popup_status = "open_small";
+        };
 
+        $popup.css("min-height", $(window).height());
+        if (animate) {
+            $popup.css("top", saved_scroll + $(window).height());
+            $popup.animate({ 'top': saved_scroll}, 300, adjustViewport);
+            current_popup_status = "open_small_animation";
+        } else {
+            adjustViewport();
+        }
+
+/*
         $("#responsiveform_viewport").css("margin-top", - saved_scroll);
         $("#responsiveform_viewport").css("overflow", "hidden");
 
@@ -125,12 +143,13 @@
         } else {
             $popup.css("top", 0);
         }
+*/
     };
 
     var openPopupSmall = function(target) {
         openPopup(target);
         adjustScreenForSmallPopup(true);
-        current_popup_status = "open_small";
+        //current_popup_status = "open_small";
     };
 
     $.fn.responsiveform = function(opts) {
