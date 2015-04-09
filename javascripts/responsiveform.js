@@ -6,6 +6,7 @@
     var initialized = false;
     var opt_response_width = 768;
     var opt_viewport_selector = ".responsiveform_viewport";
+    var closePopupCallbacks = [];
 
     var saved_scroll = 0;
 
@@ -93,9 +94,20 @@
         restore_element();
         $popup.hide();
 
-        current_popup_status = "closed";
+        if (current_popup_status != "closed") {
+            for (var i = 0; i < closePopupCallbacks.length; i++)
+                closePopupCallbacks[i]();
+            closePopupCallbacks = [];
+            current_popup_status = "closed";
+        }
     };
-
+/*
+    var onClosePopups = function(callback) {
+        if (callback != null) {
+            closePopupCallbacks.push(callback);
+        }
+    };
+*/
     var restoreScreenForSmallPopup = function() {
         $(".respopupheader").hide();
 //        $(opt_viewport_selector).css("margin-top", "");
@@ -156,15 +168,34 @@
     $.fn.responsiveform = function(opts) {
         if (!initialized)
             initialize();
+        
+        closePopup();
 
-        if (typeof opts != "undefined") {
-            if (opts.response_width != null)
-                opt_response_width = opts.response_width;
-            if (opts.header != null)
-                $(".respopupheader .header").html(opts.header);
-            if (opts.viewport_selector != null)
-                opt_viewport_selector = opts.viewport_selector;
-        }
+        if (typeof opts != "undefined" && opts.response_width != null)
+            opt_response_width = opts.response_width;
+        else
+            opt_response_width = 768;
+
+        if (typeof opts != "undefined" && opts.header != null)
+            $(".respopupheader .header").html(opts.header);
+        else
+            $(".respopupheader .header").html("");
+
+        if (typeof opts != "undefined" && opts.viewport_selector != null)
+            opt_viewport_selector = opts.viewport_selector;
+        else
+            opt_viewport_selector = ".responsiveform_viewport";
+
+        if (typeof opts != "undefined" && opts.onClosed != null)
+            closePopupCallbacks.push(opts.onClosed);
+        else
+            closePopupCallbacks = [];
+
+        if (typeof opts != "undefined" && opts.popup_width != null)
+            $(".respopup").css("width", opts.popup_width);
+        else
+            $(".respopup").css("width", opts.popup_width);
+
 
         check_current_screen_size();
 
