@@ -5,12 +5,13 @@
     var $popup = null;
     var initialized = false;
     var opt_response_width = 768;
+    var opt_disable_close = false;
     var opt_viewport_selector = ".responsiveform_viewport";
     var closePopupCallbacks = [];
 
     var saved_scroll = 0;
 
-    // "closed", "open_big", "open_small", "open_small_animation"
+    // "closed", "initial_open", open_big", "open_small", "open_animation"
     var current_popup_status = "closed";
     var is_small_screen_mode = false;
 
@@ -22,9 +23,71 @@
         }
     };
 
-    var setSize = function() {
-        check_current_screen_size();
+    var calculatePopupTopPosition = function() {
+        if (is_small_screen_mode) {
+            return 0;
+        } else {
+            if ($(window).height() >= $popup.outerHeight() + 20)
+                return ($(window).height() - $popup.outerHeight())/2;
+            else {
+                return 10;
+            }
+        }
+    };
+    var calculatePopupLeftPosition = function() {
+        if (is_small_screen_mode) {
+            return 0;
+        } else {
+            return ($(window).width() - $popup.outerWidth())/2;
+        }
+    };
+    var calculateViewportHeight = function () {
+        var bodymargin = $("body").outerHeight(true) - $("body").height();
+        if (is_small_screen_mode) {
+            return $popup.outerHeight() + saved_scroll - bodymargin
+        } else {
+            if ($(window).height() >= $popup.outerHeight() + 20) {
+                return $(window).height() + saved_scroll - bodymargin;
+            } else {
+                return $popup.outerHeight() + 20 + saved_scroll - bodymargin;
+            }
+        }
+    };
 
+    var setSize = function() {
+        if (current_popup_status == "closed")
+            return;
+
+        check_current_screen_size();
+        
+        if (is_small_screen_mode) {
+            $popup.css("min-height", $(window).height());
+            
+            $(".respopupheader").show();
+            $(".respopup .closebuttonbig").hide();
+            if (opt_disable_close) {
+                $(".respopupheader .closebutton").hide();
+            } else {
+                $(".respopupheader .closebutton").show();
+            }
+            current_popup_status = "open_small";
+        } else {
+            $popup.css("min-height", "");
+
+            $(".respopupheader").hide();
+            if (opt_disable_close) {
+                $(".respopup .closebuttonbig").hide();
+            } else {
+                $(".respopup .closebuttonbig").show();
+            }
+            current_popup_status = "open_big";
+        }
+        $(opt_viewport_selector).css("overflow", "hidden");
+        $(opt_viewport_selector).height(calculateViewportHeight());
+        $popup.css("top", calculatePopupTopPosition());
+        $popup.css("left", calculatePopupLeftPosition());
+        $(opt_viewport_selector).css("margin-top", - saved_scroll);
+        /*
         // special handling when screen changes from big to small
         if (current_popup_status == "open_big" && is_small_screen_mode) {
             adjustScreenForSmallPopup(false);
@@ -34,16 +97,48 @@
         if (current_popup_status == "open_small" && !is_small_screen_mode) {
             restoreScreenForSmallPopup();
             current_popup_status = "open_big";
+            $(".respopupoverlay").show();
         }
 
         if (current_popup_status == "open_small") {
             $popup.css("min-height", $(window).height());
             var bodymargin = $("body").outerHeight(true) - $("body").height();
             $(opt_viewport_selector).height($popup.outerHeight() - bodymargin);
+        } else if (current_popup_status == "open_big") {
+            $popup.css("max-height", $(window).height() - 20);
+            var bodymargin = $("body").outerHeight(true) - $("body").height();
+            $(opt_viewport_selector).height($(window).height);
         }
+
+        if (current_popup_status == "open_big") {
+            $popup.css("max-height", $(window).height() - 20);
+            $popup.css("top", ($(window).height() - $popup.outerHeight())/2);
+            $popup.css("left", ($(window).width() - $popup.outerWidth())/2);
+            $("body").css("overflow","hidden");
+        } else {
+            $popup.css("max-height", "");
+            $popup.css("top", "");
+            $popup.css("left", "");
+            $("body").css("overflow","");
+        }
+        */
     };
 
     var restore_element = function() {
+        $(".respopupheader").hide();
+        if (!opt_disable_close)
+            $(".respopup .closebuttonbig").show();
+
+        $(opt_viewport_selector).css("overflow", "");
+        $(opt_viewport_selector).css("height", "");
+        $(opt_viewport_selector).css("margin-top", "");
+        $popup.css("top", "");
+        $popup.css("left", "");
+        $popup.css("min-height", "");
+        $popup.css("max-height", "");
+        $(window).scrollTop(saved_scroll);
+        saved_scroll = 0;
+
         if ($el != null) {
             $el = $el.detach();
             $parent.append($el);
@@ -53,16 +148,20 @@
     };
 
     var initialize = function() {
-        $("body").prepend("<div class='respopupoverlay'></div>");
+        $("body").prepend("<div class='respopupoverlay' style='display:none;'></div>");
         $(".respopupoverlay").click(function() {
-            closePopup();
+            if (!opt_disable_close)
+                closePopup();
         });
 
-        $("body").append("<div class='respopup'></div>");
+        $("body").append("<div class='respopup'><span class='closebuttonbig'>&#x2716; Close</span></div>");
         $popup = $(".respopup");
 
-        $("body").append("<div class='respopupheader'><span class='closebutton'>Close</span><span class='header'>The Header</span></div>");
+        $("body").append("<div class='respopupheader'><span class='closebutton'>&#x2716; Close</span><span class='header'>The Header</span></div>");
         $(".respopupheader .closebutton").click(function() {
+            closePopup();
+        });
+        $(".respopup .closebuttonbig").click(function() {
             closePopup();
         });
 
@@ -70,99 +169,65 @@
             setSize();
         });
 
+        // experimental feature
+        $(window).on("popstate", function() {
+            closePopup();
+        });
+
         initialized = true;
     };
 
-    var openPopup = function(target) {
-        $(".respopupoverlay").show();
+    var openPopup = function(target, size) {
+        $(".respopupoverlay").fadeIn(600);
 
         $popup.show();
         $parent = target.parent();
         $el = target.detach();
         $popup.append($el);
 
-        current_popup_status = "open_big";
+        saved_scroll = $(window).scrollTop();
+
+        current_popup_status = "initial_open";        
+        setSize();
+
+        $(window).scrollTop(0);
+
+        var animateDone = function() {
+            if (is_small_screen_mode)
+                current_popup_status = "open_small";
+            else
+                current_popup_status = "open_big";
+        };
+
+        $popup.css("top", $(window).height());
+        $popup.animate({ 'top': calculatePopupTopPosition()}, 600, animateDone);
+        current_popup_status = "open_animation";
+
+/*
+        if (animate) {
+            $popup.css("top", $(window).height());
+            $popup.animate({ 'top': 0}, 300, animateDone);
+            current_popup_status = "open_small_animation";
+        } else {
+            $popup.css("top", 0);
+        }
+*/
     };
 
     var closePopup = function() {
-        if (current_popup_status == "open_small") {
-            restoreScreenForSmallPopup();
-        }
-        
+        if (current_popup_status == "closed")
+            return
+
         $(".respopupoverlay").hide();
         $(".respopupheader").hide();
         restore_element();
         $popup.hide();
 
-        if (current_popup_status != "closed") {
-            for (var i = 0; i < closePopupCallbacks.length; i++)
-                closePopupCallbacks[i]();
-            closePopupCallbacks = [];
-            current_popup_status = "closed";
-        }
-    };
-/*
-    var onClosePopups = function(callback) {
-        if (callback != null) {
-            closePopupCallbacks.push(callback);
-        }
-    };
-*/
-    var restoreScreenForSmallPopup = function() {
-        $(".respopupheader").hide();
-//        $(opt_viewport_selector).css("margin-top", "");
-        $(opt_viewport_selector).css("overflow", "");
-        $(opt_viewport_selector).css("height", "");
-        $popup.css("top", "");
-        $popup.css("min-height", "");
-        $(window).scrollTop(saved_scroll);
-        saved_scroll = 0;
-    };
-    var adjustScreenForSmallPopup = function(animate) {
-        saved_scroll = $(window).scrollTop();
+        current_popup_status = "closed";
 
-        var adjustViewport = function() {
-            $popup.css("top", 0);
-            $(window).scrollTop(0);
-            var bodymargin = $("body").outerHeight(true) - $("body").height();
-            $(opt_viewport_selector).height($popup.outerHeight() - bodymargin);
-            $(opt_viewport_selector).css("overflow", "hidden");
-            $(".respopupheader").show();
-            current_popup_status = "open_small";
-        };
-
-        $popup.css("min-height", $(window).height());
-        if (animate) {
-            $popup.css("top", saved_scroll + $(window).height());
-            $popup.animate({ 'top': saved_scroll}, 300, adjustViewport);
-            current_popup_status = "open_small_animation";
-        } else {
-            adjustViewport();
-        }
-
-/*
-        $("#responsiveform_viewport").css("margin-top", - saved_scroll);
-        $("#responsiveform_viewport").css("overflow", "hidden");
-
-        $popup.css("min-height", $(window).height());
-        var bodymargin = $("body").outerHeight(true) - $("body").height();
-        $("#responsiveform_viewport").height($popup.outerHeight() + saved_scroll - bodymargin);
-
-        $(window).scrollTop(0);
-
-        if (animate) {
-            $popup.css("top", saved_scroll + $(window).height());
-            $popup.animate({ 'top': 0}, 300);
-        } else {
-            $popup.css("top", 0);
-        }
-*/
-    };
-
-    var openPopupSmall = function(target) {
-        openPopup(target);
-        adjustScreenForSmallPopup(true);
-        //current_popup_status = "open_small";
+        for (var i = 0; i < closePopupCallbacks.length; i++)
+            closePopupCallbacks[i]();
+        closePopupCallbacks = [];
     };
 
     $.fn.responsiveform = function(opts) {
@@ -186,25 +251,37 @@
         else
             opt_viewport_selector = ".responsiveform_viewport";
 
-        if (typeof opts != "undefined" && opts.onClosed != null)
-            closePopupCallbacks.push(opts.onClosed);
-        else
+        if (typeof opts != "undefined" && opts.onClosed != null) {
             closePopupCallbacks = [];
+            closePopupCallbacks.push(opts.onClosed);
+        } else {
+            closePopupCallbacks = [];
+        }
 
         if (typeof opts != "undefined" && opts.popup_width != null)
             $(".respopup").css("width", opts.popup_width);
         else
             $(".respopup").css("width", opts.popup_width);
 
+        if (typeof opts != "undefined" && opts.disable_close == true) {
+            opt_disable_close = true;
+            $(".respopupheader .closebutton").hide();
+            $(".respopup .closebuttonbig").hide();
+        } else {
+            opt_disable_close = false;
+            $(".respopupheader .closebutton").show();
+            $(".respopup .closebuttonbig").show();
+        }
 
-        check_current_screen_size();
+        openPopup(this);
 
-        if (is_small_screen_mode)
-            openPopupSmall(this);
-        else
-            openPopup(this);
-
-        setSize();
+        // experimental feature
+        if (history.state != null && history.state["responsiveform"] == "open") {
+            history.replaceState({responsiveform:"open"}, document.title);
+        } else {
+            history.pushState({responsiveform:"open"}, document.title);
+        }
+        
     };
 
     $.fn.responsiveform_close = function() {

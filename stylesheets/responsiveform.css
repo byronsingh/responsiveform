@@ -9,13 +9,26 @@
 }
 .respopup {
     z-index:10000;
-    position:fixed;
-    top: 50%;
-    left: 50%;
+    position:absolute;
     background-color:#FFFFFF;
-    transform: translate(-50%, -50%);
     padding:10px;
     border:2px solid #C0C0C0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.respopup * {
+    box-sizing:border-box;
+}
+.respopup .closebuttonbig {
+    position:absolute;
+    right:10px;
+    top:8px;
+    cursor:pointer;
+    padding: 3px 6px;
+    background-color: #FFEEDD;
+    border-radius: 5px;
+    border:1px solid #F1663B;
+    color: #606060;
 }
 .respopupheader {
     position:fixed;
@@ -25,21 +38,34 @@
     z-index:10001;
     padding:0px 10px;
     background-color:#FFFFFF;
-    cursor:pointer;
     box-sizing:border-box;
     text-align:center;
     display:none;
-    height:35px;
+    height:40px;
     line-height:35px;
     vertical-align:middle;
+    border-bottom: 1px solid #F1663B;
+    opacity: 0.9;
 }
 .respopupheader .closebutton {
     position:absolute;
-    top:0px;
-    left:10px;
+    border:1px solid #F1663B;
+    left:4px;
+    top:4px;
+    cursor:pointer;
+    padding: 7px 5px 0px;
+    background-color: #FFEEDD;
+    border-radius: 5px;
+    color: #606060;
+    height:31px;
+    font-size:14px;
+    line-height:16px;
 }
 .respopupheader .header {
     font-weight:bold;
+}
+.respopupheader * {
+    box-sizing:border-box;
 }
 @media screen and (max-width: 767px) {
     .respopup {
@@ -49,7 +75,7 @@
         top:0px;
         margin:0px;
         transform: none;
-        padding:35px 0px 0px 0px !important;
+        padding:40px 0px 100px 0px !important;
         border:0px !important;
     }
 }
