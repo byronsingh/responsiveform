@@ -276,10 +276,12 @@
         openPopup(this);
 
         // experimental feature
-        if (history.state != null && history.state["responsiveform"] == "open") {
-            history.replaceState({responsiveform:"open"}, document.title);
-        } else {
-            history.pushState({responsiveform:"open"}, document.title);
+        if (history && history.pushState) {
+            if (history.state != null && history.state["responsiveform"] == "open") {
+                history.replaceState({responsiveform:"open"}, document.title);
+            } else {
+                history.pushState({responsiveform:"open"}, document.title);
+            }
         }
         
     };
