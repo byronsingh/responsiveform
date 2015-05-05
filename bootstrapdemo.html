@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Responsive Form Demo</title>
+		<meta name="viewport" content="width=device-width" >
+		<link rel="stylesheet" type="text/css" href="./stylesheets/responsiveform.css">
+		<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+		<script src="./javascripts/responsiveform.js"></script>
+
+		<style>
+			input {
+				font-size:18px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="responsiveform_viewport">
+		<div>
+			<p>Welcome, <button data-toggle="modal" data-target="#myModal">click here</button> to open a popup form</p>
+			<p>Some text 1</p>
+			<p>Some text 2</p>
+			<p>Some text 3</p>
+			<p>Some text 4</p>
+			<p>Some text 5</p>
+			<p>Some text 6</p>
+			<p>Some text 7</p>
+			<button data-toggle="modal" data-target="#myModal">click here</button> to open a popup form</p>
+			<p>Some text 8</p>
+			<p>Some text 9</p>
+			<p>Some text 10</p>
+			<p>Some text 11</p>
+			<p>Some text 12</p>
+			<p>Some text 13</p>
+			<p>Some text 14</p>
+			<button data-toggle="modal" data-target="#myModal">click here</button> to open a popup form</p>
+			<p>Some text 15</p>
+			<p>Some text 16</p>
+			<p>Some text 17</p>
+			<p>Some text 18</p>
+			<p>Some text 19</p>
+			<p>Some text 20</p>
+			<p>Some text 21</p>
+			<button data-toggle="modal" data-target="#myModal">click here</button> to open a popup form</p>
+			<p>Some text 22</p>
+			<p>Some text 23</p>
+			<p>Some text 24</p>
+			<p>Some text 25</p>
+			<p>Some text 26</p>
+			<p>Some text 27</p>
+			<p>Some text 28</p>
+		</div>
+		
+		<!-- Modal -->
+    	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                    </button>
+                     <h4 class="modal-title" id="myModalLabel">Testing Responsive</h4>
+                </div>
+                <div class="modal-body">
+                	<p>View this popup on a mobile phone (ex. iOS) and click on any form input field.</p>
+                	<form>
+						<p><label>Name</label> <input name="name" style="width:100%; max-width:300px;" /></p>
+						<p><label>Email</label> <input type="email" name="email" style="width:100%; max-width:300px;"/></p>
+						<p><label>DOB</label> <input type="date" name="dob" style="width:100%; max-width:300px;"/></p>
+						<p><button id="submit">Submit</button></p>
+					</form>	
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+
+		<div style="display:none;">
+			<div id="popup_form" style="background-color:#FFFFFF; padding:30px 20px;">
+				<form>
+					<p><label>Name</label> <input name="name" style="width:100%; max-width:300px;" /></p>
+					<p><label>Email</label> <input type="email" name="email" style="width:100%; max-width:300px;"/></p>
+					<p><label>DOB</label> <input type="date" name="dob" style="width:100%; max-width:300px;"/></p>
+					<p><button id="submit">Submit</button></p>
+				</form>
+			</div>
+		</div>
+		</div>
+	</body>
+
+	<script>
+		$(function() {
+			$(".trigger_form").click(function() {
+				$("#popup_form").responsiveform({header: "Enter Details"});
+			});
+			$("#submit").click(function(e) {
+				$("#popup_form").responsiveform_close();
+				return false;
+			});
+		});
+	</script>
+</html>
