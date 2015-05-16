@@ -9,15 +9,44 @@
 		<script src="./javascripts/responsiveform.js"></script>
 
 		<style>
+			body {
+				font-family:"arial";
+				padding:10px;
+			}
 			input {
 				font-size:18px;
+			}
+			.respopupheader {
+				color:#F2754F;
+				padding-top:3px;
+			}
+			label {
+				color:#F2754F;
+				font-weight:bold;
+				display:inline-block;
+				min-width:70px;
+			}
+			input {
+				padding:5px 10px;
+			}
+			button {
+				padding:6px 12px;
+				font-size:16px;
+			}
+			.formp {
+				margin:0px;
+				padding:10px 5px;
+				border-bottom:1px solid #E0E0E0;
+			}
+			.respopup {
+				background-color: #F0F0F0;
 			}
 		</style>
 	</head>
 	<body>
 		<div class="responsiveform_viewport">
 		<div>
-			<p>This is a pop-up demo using ResponsiveForm plugin</p>
+			<h1>This is a pop-up demo using ResponsiveForm plugin</h1>
 			<p><button class="trigger_form">click here</button> to open a popup form</p>
 			<p>Some text 1</p>
 			<p>Some text 2</p>
@@ -53,15 +82,15 @@
 		</div>
 		
 		<div style="display:none;">
-			<div id="popup_form" style="background-color:#FFFFFF; padding:30px 20px;">
+			<div id="popup_form" style="padding:30px 20px;">
 				<form>
-					<p>View this ResponsiveForm pop-up on a mobile phone.</p>
+					<p><b>View this ResponsiveForm pop-up on a mobile phone</b></p>
 					<p>
-						Try to zoom / scroll / switch between portrait and landscape and click on input to see how the browser behaves.
+						Try to zoom / scroll / switch between portrait and landscape and click on input to see how the browser behaves
 					</p>
-					<p><label>Name</label> <input name="name" style="width:100%; max-width:300px;" /></p>
-					<p><label>Email</label> <input type="email" name="email" style="width:100%; max-width:300px;"/></p>
-					<p><label>DOB</label> <input type="date" name="dob" style="width:100%; max-width:300px;"/></p>
+					<p class="formp"><label>Name</label> <input name="name" style="width:100%; max-width:300px;" /></p>
+					<p class="formp"><label>Email</label> <input type="email" name="email" style="width:100%; max-width:300px;"/></p>
+					<p class="formp"><label>DOB</label> <input type="date" name="dob" style="width:100%; max-width:300px;"/></p>
 					<p><button id="submit">Submit</button></p>
 				</form>
 			</div>

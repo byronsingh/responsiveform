@@ -87,41 +87,6 @@
         $popup.css("top", calculatePopupTopPosition());
         $popup.css("left", calculatePopupLeftPosition());
         $(opt_viewport_selector).css("margin-top", - saved_scroll);
-        /*
-        // special handling when screen changes from big to small
-        if (current_popup_status == "open_big" && is_small_screen_mode) {
-            adjustScreenForSmallPopup(false);
-            current_popup_status = "open_small";
-        }
-        // special handling when screen changes from small to big
-        if (current_popup_status == "open_small" && !is_small_screen_mode) {
-            restoreScreenForSmallPopup();
-            current_popup_status = "open_big";
-            $(".respopupoverlay").show();
-        }
-
-        if (current_popup_status == "open_small") {
-            $popup.css("min-height", $(window).height());
-            var bodymargin = $("body").outerHeight(true) - $("body").height();
-            $(opt_viewport_selector).height($popup.outerHeight() - bodymargin);
-        } else if (current_popup_status == "open_big") {
-            $popup.css("max-height", $(window).height() - 20);
-            var bodymargin = $("body").outerHeight(true) - $("body").height();
-            $(opt_viewport_selector).height($(window).height);
-        }
-
-        if (current_popup_status == "open_big") {
-            $popup.css("max-height", $(window).height() - 20);
-            $popup.css("top", ($(window).height() - $popup.outerHeight())/2);
-            $popup.css("left", ($(window).width() - $popup.outerWidth())/2);
-            $("body").css("overflow","hidden");
-        } else {
-            $popup.css("max-height", "");
-            $popup.css("top", "");
-            $popup.css("left", "");
-            $("body").css("overflow","");
-        }
-        */
     };
 
     var restore_element = function() {
@@ -202,16 +167,6 @@
         $popup.css("top", $(window).height());
         $popup.animate({ 'top': calculatePopupTopPosition()}, 600, animateDone);
         current_popup_status = "open_animation";
-
-/*
-        if (animate) {
-            $popup.css("top", $(window).height());
-            $popup.animate({ 'top': 0}, 300, animateDone);
-            current_popup_status = "open_small_animation";
-        } else {
-            $popup.css("top", 0);
-        }
-*/
     };
 
     var closePopup = function() {
